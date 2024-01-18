@@ -1,0 +1,213 @@
+﻿@using Core_Sample_Pra.ViewModel;
+@model IndexBook
+
+
+<script>
+    var UrlIndex = '@Url.Action("Index")';
+    var UrlGetEditData = '@Url.Action("GetEditBookData")';
+    var UrlInsert = '@Url.Action("Book")';
+    var UrlEdit = '@Url.Action("SetEditData")';
+    var UrlDelete = '@Url.Action("Book")';
+    var UrlGetHistory = '@Url.Action("BookHistory")';
+    var UrlGetDetail = '@Url.Action("BookDetail")';
+    var searchformname = 'SearchBookForm';
+    var editformname = 'BookEditForm';
+
+</script>
+<script src="~/js/practise.js?@DateTime.Now.ToString("yyyyMMddHHmmssfff")"></script>
+
+<!-- Button trigger modal -->
+
+<br />
+@using (Html.BeginForm("InsertMember", "Home", FormMethod.Post, new { @id = "BookEditForm" }))
+{
+    <div>
+        @await Html.PartialAsync("_EditPartial", Model)
+    </div>
+}
+@using (Html.BeginForm("Index", "Home", FormMethod.Get, new { @id = "SearchBookForm" }))
+{
+    <div>
+        @await Html.PartialAsync("_SeachPartial", Model)
+    </div>
+    <div style="margin-left:15px" class="col-1">
+        顯示筆數
+        @Html.DropDownListFor(x => x.filter_V_IndexBook.TakePageNumber,new SelectList(ViewBag.TakePageNumber,"Value","Text"), new { @class = "form-control" })
+    </div>
+}
+
+<div>
+    @await Html.PartialAsync("_BookHistory")
+    @await Html.PartialAsync("_BookDetail")
+</div>
+<br />
+<div class="container">
+
+    <table class="table table-hover  table-striped text-center table-bordered">
+        <colgroup>
+            <col style="width: 10%">
+            <col style="width: 20%">
+            <col style="width: 10%">
+            <col style="width: 15%">
+            <col style="width: 15%">
+        </colgroup>
+        <thead>
+            @{
+                string[] theadarray = { "圖書類別", "書名", "購書日期", "借閱狀態", "借閱人" };
+                string[] sortOrderarray = { "BOOK_CLASS_ID", "BOOK_NAME", "BOOK_BOUGHT_DATE", "CODE_NAME", "USER_ID" };
+            }
+            <tr>
+                
+                @for (int t = 0; t < theadarray.Length; t++)
+                {
+                    <th>
+                        @theadarray[t]
+                        <a asp-action="Index"
+                           asp-route-page="1"
+                           asp-route-sortOrder=@sortOrderarray[t]
+                           asp-route-sortDirection="@( ViewBag.CurrentSort == sortOrderarray[t] && ViewBag.CurrentDirection == "asc" ? "desc" : "asc")"
+                           asp-route-currentpage="1"
+                           asp-route-filter_V_IndexBook.TakePageNumber="@ViewData["PageNumber"]"
+                           asp-route-filter_V_IndexBook_BOOK_NAME="@Model.filter_V_IndexBook.BOOK_NAME"
+                           asp-route-filter_V_IndexBook.BOOK_CLASS_ID="@Model.filter_V_IndexBook.BOOK_CLASS_ID"
+                           asp-route-filter_V_IndexBook.USER_ID="@Model.filter_V_IndexBook.USER_ID"
+                           asp-route-filter_V_IndexBook.CODE_ID="@Model.filter_V_IndexBook.CODE_ID">
+                            @if (ViewBag.CurrentSort == sortOrderarray[t] && ViewBag.CurrentDirection == "asc")
+                            {
+                                @Html.Raw("▲")
+                            }
+                            else if (ViewBag.CurrentSort == sortOrderarray[t] && ViewBag.CurrentDirection == "desc")
+                            {
+                                @Html.Raw("▼")
+                            }
+                            else
+                            {
+                                @Html.Raw("▼")
+                            }
+                        </a>
+                    </th>
+                }
+                <th>編輯</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var book in Model.v_IndexBook_List)
+            {
+                <tr>
+                    @* <th>@member.Id</th>*@
+                    <th scope="col">
+                        @book.BOOK_CLASS_NAME
+                        </th>
+                    <th scope="col">
+                        <button data-bs-toggle="modal" data-bs-target="#BookDetailModal" class="transparent-button" onclick="GetBookDetail('@book.BOOK_ID')">@book.BOOK_NAME</button>
+                    </th>
+                    <th>@book.BOOK_BOUGHT_DATE</th>
+                    <th>
+                        @book.CODE_NAME
+                    </th>
+                    <th>@(book.USER_ENAME == null ? book.USER_CNAME : book.USER_ENAME)</th>
+                    <th >
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-success" id="ShowHistory" onclick="GetHistory('@(book.BOOK_ID)')" data-bs-toggle="modal" data-bs-target="#HistoryModal">
+                                借閱紀錄
+                            </button>
+                            <span style="margin: 0 15px"></span>
+                            <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#EditBookModal" onclick="Editshow('@(book.BOOK_ID)')">
+                                編輯
+                            </button>
+                            <span style="margin: 0 15px"></span>
+                            @if (book.CODE_ID == "A" || book.CODE_ID == "U")
+                            {
+                                <button type="button" class="btn btn-danger col" onclick="Delete('@(book.BOOK_ID)','@(book.BOOK_NAME)')">
+                                    刪除
+                                </button>
+                            }
+                            else
+                            {
+                                <div style="width:58px; height :38px "></div>
+                            }
+
+                        </div>
+                        
+                    </th>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div id="pageList" class="d-flex justify-content-between bd-highlight mb-3">
+        <div>
+            <a asp-action="Index"
+               asp-route-sortBy="@ViewData["CurrentSort"]"
+               asp-route-page="1"
+               asp-route-currentpage="1"
+               asp-route-filter_V_IndexBook.TakePageNumber="@ViewData["PageNumber"]"
+               asp-route-filter_V_IndexBook_BOOK_NAME="@Model.filter_V_IndexBook.BOOK_NAME"
+               asp-route-filter_V_IndexBook.BOOK_CLASS_ID="@Model.filter_V_IndexBook.BOOK_CLASS_ID"
+               asp-route-filter_V_IndexBook.USER_ID="@Model.filter_V_IndexBook.USER_ID"
+               asp-route-filter_V_IndexBook.CODE_ID="@Model.filter_V_IndexBook.CODE_ID"
+               class="btn btn-success">
+                第1頁
+            </a>
+        </div>
+        @{
+            bool read = true;
+            int ndex_cut = -2;
+            int ndex_add = 3;
+        }
+        @for (int i = @Model.filter_V_IndexBook.CurrentPage + ndex_cut; i < @Model.filter_V_IndexBook.CurrentPage + ndex_add; i++)
+        {
+            if (Model.filter_V_IndexBook.TotalPage - Model.filter_V_IndexBook.CurrentPage < 3 && read)
+            {
+                i = i - (3 - (Model.filter_V_IndexBook.TotalPage - Model.filter_V_IndexBook.CurrentPage));
+                read = false;
+                continue;
+            }
+
+            else if (i > Model.filter_V_IndexBook.TotalPage)
+            {
+                continue;
+            }
+            else if (i < 1)
+            {
+                ndex_add++;
+                continue;
+            }
+            <a asp-action="Index"
+               asp-route-sortBy="@ViewData["CurrentSort"]"
+               asp-route-page="@i"
+               asp-route-currentpage="@i"
+               asp-route-filter_V_IndexBook.TakePageNumber="@ViewData["PageNumber"]"
+               asp-route-filter_V_IndexBook_BOOK_NAME="@Model.filter_V_IndexBook.BOOK_NAME"
+               asp-route-filter_V_IndexBook.BOOK_CLASS_ID="@Model.filter_V_IndexBook.BOOK_CLASS_ID"
+               asp-route-filter_V_IndexBook.USER_ID="@Model.filter_V_IndexBook.USER_ID"
+               asp-route-filter_V_IndexBook.CODE_ID="@Model.filter_V_IndexBook.CODE_ID"
+               class="btn btn-@(@Model.filter_V_IndexBook.CurrentPage==i?"default":"primary") ">
+                @i
+            </a>
+        }
+        <div>
+            <a asp-action="Index"
+               asp-route-sortBy="@ViewData["CurrentSort"]"
+               asp-route-page="@Model.filter_V_IndexBook.TotalPage"
+               asp-route-currentpage="@Model.filter_V_IndexBook.CurrentPage"
+               asp-route-filter_V_IndexBook.TakePageNumber="@ViewData["PageNumber"]"
+               asp-route-filter_V_IndexBook_BOOK_NAME="@Model.filter_V_IndexBook.BOOK_NAME"
+               asp-route-filter_V_IndexBook.BOOK_CLASS_ID="@Model.filter_V_IndexBook.BOOK_CLASS_ID"
+               asp-route-filter_V_IndexBook.USER_ID="@Model.filter_V_IndexBook.USER_ID"
+               asp-route-filter_V_IndexBook.CODE_ID="@Model.filter_V_IndexBook.CODE_ID"
+               class="btn btn-success">
+                第@(Model.filter_V_IndexBook.TotalPage)頁
+            </a>
+        </div>
+    </div>
+</div>
+<style>
+    .transparent-button {
+        background: transparent;
+        border: none;
+        color: inherit;
+        cursor: pointer;
+        color:darkblue;
+    }
+</style>

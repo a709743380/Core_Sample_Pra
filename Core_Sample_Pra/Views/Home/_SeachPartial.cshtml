@@ -1,0 +1,61 @@
+﻿@using Core_Sample_Pra.ViewModel;
+@model IndexBook
+
+
+
+<div class="text-center">
+    @*    <div class="hide">
+    @Html.HiddenFor(x => x.filter_V_IndexBook.BOOK_NAME)
+    </div>*@
+
+    <div class="row mb-3">
+        @Html.LabelFor(x => x.filter_V_IndexBook.BOOK_NAME, new{ @class="col-sm-3 col-form-label" })
+        <div class="col-sm-5">
+            @Html.TextBoxFor(x => x.filter_V_IndexBook.BOOK_NAME, new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="row mb-3">
+        @Html.LabelFor(x => x.filter_V_IndexBook.BOOK_CLASS_NAME, new{ @class="col-sm-3 col-form-label" })
+        <div class="col-sm-5">
+            @Html.DropDownListFor(x => x.filter_V_IndexBook.BOOK_CLASS_ID,new SelectList(ViewBag.BOOK_CLASS_NAME,"Value","Text"), "---請選擇---", new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="row mb-3">
+        @Html.LabelFor(x => x.filter_V_IndexBook.USER_ENAME, new{ @class="col-sm-3 col-form-label" })
+        <div class="col-sm-5">
+            @Html.DropDownListFor(x => x.filter_V_IndexBook.USER_ID,new SelectList(ViewBag.USER_ENAME,"Value","Text"), "---請選擇---", new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="row mb-3">
+        @Html.LabelFor(x => x.filter_V_IndexBook.CODE_NAME, new{ @class="col-sm-3 col-form-label" })
+        <div class="col-sm-5">
+            @Html.DropDownListFor(x => x.filter_V_IndexBook.CODE_ID,new SelectList(ViewBag.BOOK_CODE,"Value","Text"), "---請選擇---", new { @class = "form-control" })
+        </div>
+    </div>
+
+    <div class="col-sm-6 text-center" style="display: inline-block; vertical-align: middle; margin-left: -50px">
+        <button type="button" id="Serach" class="btn btn-primary">查詢</button>
+        <span style="margin: 0 15px"></span>
+        <button  type="button"  onclick="Reset()" class="btn btn-warning">清除</button>
+        <span style="margin: 0 15px"></span>
+        <button type="button"   onclick="SetAddDialog()" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#EditBookModal">新增</button>
+
+        
+    </div>
+</div>
+
+<style>
+    .label-container {
+        width: 100px;
+    }
+
+        .label-container label button {
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+    .input-container {
+        display: flex;
+        align-items: center;
+    }
+</style>

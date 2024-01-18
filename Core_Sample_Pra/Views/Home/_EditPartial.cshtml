@@ -1,0 +1,81 @@
+﻿@using Core_Sample_Pra.ViewModel;
+@model IndexBook
+
+<!-- Modal -->
+<form>
+<div class="modal fade" id="EditBookModal" tabindex="-1" aria-labelledby="EditBookModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="EditBookModalLabel">新增</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div>
+                @Html.HiddenFor(x => x.EditBook.BOOK_ID)
+                <div class="text-center">
+
+                    <div class="row mb-3">
+                        @Html.LabelFor(x => x.EditBook.BOOK_NAME, new{ @class="col-sm-3 col-form-label" })
+                        <div class="col-sm-7">
+                            @Html.TextBoxFor(x => x.EditBook.BOOK_NAME, new { @class = "form-control" })
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        @Html.LabelFor(x => x.EditBook.BOOK_AUTHOR, new{ @class="col-sm-3 col-form-label" })
+                        <div class="col-sm-7">
+                            @Html.TextBoxFor(x => x.EditBook.BOOK_AUTHOR, new { @class = "form-control" })
+                         
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        @Html.LabelFor(x => x.EditBook.BOOK_PUBLISHER, new{ @class="col-sm-3 col-form-label" })
+                        <div class="col-sm-7">
+                            @Html.TextBoxFor(x => x.EditBook.BOOK_PUBLISHER, new { @class = "form-control"   })
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        @Html.LabelFor(x => x.EditBook.BOOK_NOTE, new{ @class="col-sm-3 col-form-label" })
+                        <div class="col-sm-7">
+                            @Html.TextAreaFor(x => x.EditBook.BOOK_NOTE, new { @class = "form-control"  })
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        @Html.LabelFor(x => x.EditBook.BOOK_BOUGHT_DATE, new{ @class="col-sm-3 col-form-label" })
+                        <div class="col-sm-7">
+                            @Html.TextBoxFor(x => x.EditBook.BOOK_BOUGHT_DATE, new {@type="date", @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        @Html.LabelFor(x => x.EditBook.BOOK_CLASS_ID, new{ @class="col-sm-3 col-form-label" })
+                        <div class="col-sm-7">
+                            @Html.DropDownListFor(x => x.EditBook.BOOK_CLASS_ID,new SelectList(ViewBag.BOOK_CLASS_NAME,"Value","Text"), "---請選擇---", new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="AddHide">
+                        <div class="row mb-3">
+                            @Html.LabelFor(x => x.EditBook.BOOK_STATUS, new{ @class="col-sm-3 col-form-label" })
+                            <div class="col-sm-7">
+                                @Html.DropDownListFor(x => x.EditBook.BOOK_STATUS,new SelectList(ViewBag.BOOK_CODE,"Value","Text"), "---請選擇---", new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            @Html.LabelFor(x => x.EditBook.BOOK_KEEPER, new{ @class="col-sm-3 col-form-label" })
+                            <div class="col-sm-7">
+                                @Html.DropDownListFor(x => x.EditBook.BOOK_KEEPER,new SelectList(ViewBag.USER_ENAME,"Value","Text"), "---請選擇---", new { @class = "form-control" })
+                            </div>
+                        </div>
+                    </div>
+  
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="AddData" class="btn btn-primary">存檔</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+               
+            </div>
+        </div>
+    </div>
+</div>
+
+</form>
